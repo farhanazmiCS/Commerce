@@ -17,6 +17,7 @@ class Listing(models.Model):
 class Bid(models.Model):
     bidding_user = models.ForeignKey(User, on_delete=models.CASCADE)
     bidded_item = models.ForeignKey(Listing, on_delete=models.CASCADE)
+    bid_price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
 
 class Comment(models.Model):
     user_commenting = models.ForeignKey(User, on_delete=models.CASCADE)

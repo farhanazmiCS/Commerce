@@ -92,3 +92,8 @@ def watchlist(request):
 @login_required
 def categories(request):
     pass
+
+def view_listing(request, inputListing):
+    return render(request, "auctions/listing.html", {
+        "listings": Listing.objects.filter(id=inputListing)
+    })
