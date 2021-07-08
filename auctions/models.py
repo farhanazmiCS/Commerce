@@ -8,8 +8,10 @@ class User(AbstractUser):
 class Listing(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     listing = models.CharField(max_length=120)
-    price = models.DecimalField(max_digits=8, decimal_places=2)
+    # Digits include the digits after the decimal point, so make sure it is sufficient.
+    price = models.DecimalField(max_digits=12, decimal_places=2)
     description = models.TextField()
+    photo = models.ImageField(upload_to='images', blank=True)
 
     def __str__(self):
         return f"{self.listing} for sale by {self.user} - ${self.price}"
@@ -17,7 +19,7 @@ class Listing(models.Model):
 class Bid(models.Model):
     bidding_user = models.ForeignKey(User, on_delete=models.CASCADE)
     bidded_item = models.ForeignKey(Listing, on_delete=models.CASCADE)
-    bid_price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+    bid_price = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 
 class Comment(models.Model):
     user_commenting = models.ForeignKey(User, on_delete=models.CASCADE)

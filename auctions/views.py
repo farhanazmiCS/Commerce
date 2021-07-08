@@ -1,10 +1,11 @@
+from django import forms
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.urls import reverse
-
+from django import forms
 
 from .models import User, Listing, Bid, Comment
 
@@ -66,16 +67,19 @@ def register(request):
         return render(request, "auctions/register.html")
 
 @login_required
-def createlisting(request):
+def createlisting(request): 
     if request.method == "GET":
         return render(request, "auctions/createlisting.html")
+
     elif request.method == "POST":
+
         listing_name = request.POST["listing"]
         listing_price = float(request.POST["price"])
         listing_description = request.POST["textfield"]
+        image = request.FILES["imagefield"]
 
     try:
-        add_listing = Listing(user=request.user, listing=listing_name, price=listing_price, description=listing_description)
+        add_listing = Listing(user=request.user, listing=listing_name, price=listing_price, description=listing_description, photo=image)
         add_listing.save()
         
     except IntegrityError:
