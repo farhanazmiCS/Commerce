@@ -11,7 +11,7 @@ class Listing(models.Model):
     # Digits include the digits after the decimal point, so make sure it is sufficient.
     price = models.DecimalField(max_digits=12, decimal_places=2)
     description = models.TextField()
-    photo = models.ImageField(upload_to='images', blank=True)
+    photo = models.ImageField(upload_to='images')
 
     def __str__(self):
         return f"{self.listing} for sale by {self.user} - ${self.price}"

@@ -1,9 +1,10 @@
 from django import forms
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 from django import forms
 
@@ -101,3 +102,25 @@ def view_listing(request, inputListing):
     return render(request, "auctions/listing.html", {
         "listings": Listing.objects.filter(id=inputListing)
     })
+
+@login_required
+def bid(request, inputListing):
+    if request.method == "GET":
+        return render(request, "auctions/bid.html", {
+            "listings": Listing.objects.filter(id=inputListing)
+        })
+    elif request.method == "POST":
+        bid_price = float(request.POST["bid"])
+        for listing in Listing.objects.filter(id=inputListing):
+            current_price = float(listing.price)
+
+        if bid_price <= current_price:
+            return render(request, "auctions/bid.html", {
+                "listings": Listing.objects.filter(id=inputListing),
+                "error_message": "Your bid needs to be higher than the starting price."
+            })
+        else:
+            for listing in Listing.objects.filter(id=inputListing):
+                listing.price = bid_price
+                listing.save()
+            return redirect(f'/listing/{inputListing}')

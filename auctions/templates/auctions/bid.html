@@ -1,0 +1,20 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+
+    {% if error_message %}
+        <div>{{ error_message }}
+    {% endif %}
+
+    {% for listing in listings %}
+        <h3>{{ listing.listing }}</h3>
+        <img src={{ listing.photo.url }}>
+        <h3>Current Price: ${{ listing.price }}</h3>
+    {% endfor %}
+    <form method="POST">
+        {% csrf_token %}
+        <label for="bid">Place your bid:</label>
+        <input type="number" name="bid" step="0.01">
+        <input type="submit">
+    </form>
+{% endblock %}

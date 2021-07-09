@@ -4,7 +4,7 @@
     {% for listing in listings%}
         <img src="{{ listing.photo.url }}"><br><br>
         <h2>{{ listing.listing }}</h2><br>
-        <h4>Start Bid: ${{ listing.price }}</h4><br>
+        <h4>Current Bid: ${{ listing.price }}</h4><a href="{% url 'bid' listing.id %}"><input type="button" value="Place your bid"></a><br>
         <h4>Description:</h4>
         <p>{{ listing.description }}</p>
     {% endfor %}
