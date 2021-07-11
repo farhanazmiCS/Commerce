@@ -8,8 +8,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django import forms
 
-from .models import User, Listing, Bid, Comment
-from operator import itemgetter
+from .models import User, Listing, Bid, Comment, Winner
 
 def index(request):
     return render(request, "auctions/index.html", {
@@ -86,7 +85,7 @@ def createlisting(request):
         
     except IntegrityError:
         return render(request, "auctions/createlisting.html", {
-            "message": "Something went wrong. Contact Indian technical support."
+            "message": "Missing Fields."
         })
 
     return HttpResponseRedirect(reverse("index"))
@@ -99,27 +98,46 @@ def watchlist(request):
 def categories(request):
     pass
 
+@login_required
 def view_listing(request, inputListing):
-    listing = Listing.objects.filter(id=inputListing)
-    bids_list = Bid.objects.filter(bidded_item=inputListing)
-    # Latest entry will be the highest bidder, server will not allow bids equal or less than current price/bid.
-    winner = bids_list[0].bidding_user
+    listing = Listing.objects.filter(id=inputListing)    
+    # Check if the logged on user is the owner of the listing, if yes, allow the user to close the listing and declare
+    # the highest bidder the winner
     for l in listing:
         if l.user == request.user:
+            # If button is pressed, close the listing
             if request.method == "POST":
-                l.is_closed = True
-                l.save()
-
+                try:
+                    # Close the listing
+                    l.is_closed = True
+                    l.save()
+                    # Retrieve all bids with the same listing id, and check for the highest
+                    bids_list = Bid.objects.filter(bidded_item=inputListing)
+                    # The '-' symbol denotes sorting in descending order.
+                    bids_list = bids_list.order_by('-bidded_item_id')
+                    # Retrieve the highest bidder
+                    winner = bids_list[0].bidding_user
+                    # Save the winner into the Winner model
+                    set_winner = Winner(user=winner, listing=Listing.objects.get(id=inputListing))
+                    set_winner.save()
+                # Raise exception if no bidders
+                except:
+                    return render(request, "auctions/error.html", {
+                        "error_message": "No bidders."
+                    })
+                # Return a page that indicates that the listing is closed
                 return render(request, "auctions/closedlisting.html", {
                     "message": "This listing is closed.",
                     "listings": Listing.objects.filter(id=inputListing),
                     "winner": winner
                 })
             else:
+                # Load the listing page for the original poster
                 return render(request, "auctions/userlisting.html", {
                     "listings": Listing.objects.filter(id=inputListing)
                 })
         else:
+            # Load the listing page for viewers to bid
             return render(request, "auctions/listing.html", {
             "listings": Listing.objects.filter(id=inputListing)
             })
@@ -131,7 +149,14 @@ def bid(request, inputListing):
             "listings": Listing.objects.filter(id=inputListing)
         })
     elif request.method == "POST":
-        bid_price = float(request.POST["bid"])
+        try:
+            get_price = request.POST["bid"]
+            bid_price = float(get_price)
+        except ValueError:
+            return render(request, "auctions/bid.html", {
+                "listings": Listing.objects.filter(id=inputListing),
+                "error_message": "Enter a numerical value."
+            })
         for listing in Listing.objects.filter(id=inputListing):
             current_price = float(listing.price)
 

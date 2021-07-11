@@ -1,0 +1,7 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+    {% if error_message %}
+        <h3 style="color: red">{{ error_message }}</h3>
+    {% endif %}
+{% endblock %}
