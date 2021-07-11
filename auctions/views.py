@@ -114,7 +114,7 @@ def view_listing(request, inputListing):
                     # Retrieve all bids with the same listing id, and check for the highest
                     bids_list = Bid.objects.filter(bidded_item=inputListing)
                     # The '-' symbol denotes sorting in descending order.
-                    bids_list = bids_list.order_by('-bidded_item_id')
+                    bids_list = bids_list.order_by('-bid_price')
                     # Retrieve the highest bidder
                     winner = bids_list[0].bidding_user
                     # Save the winner into the Winner model
