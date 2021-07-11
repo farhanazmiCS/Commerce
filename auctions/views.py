@@ -85,7 +85,7 @@ def createlisting(request):
         
     except IntegrityError:
         return render(request, "auctions/createlisting.html", {
-            "message": "Something went wrong. Contact Indian technical support."
+            "message": "Something went wrong."
         })
 
     return HttpResponseRedirect(reverse("index"))
