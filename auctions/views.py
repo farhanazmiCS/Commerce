@@ -9,10 +9,11 @@ from django.urls import reverse
 from django import forms
 
 from .models import User, Listing, Bid, Comment
+from operator import itemgetter
 
 def index(request):
     return render(request, "auctions/index.html", {
-        "listings": Listing.objects.all()
+        "listings": Listing.objects.filter(is_closed=False)
     })
 
 
@@ -99,9 +100,29 @@ def categories(request):
     pass
 
 def view_listing(request, inputListing):
-    return render(request, "auctions/listing.html", {
-        "listings": Listing.objects.filter(id=inputListing)
-    })
+    listing = Listing.objects.filter(id=inputListing)
+    bids_list = Bid.objects.filter(bidded_item=inputListing)
+    # Latest entry will be the highest bidder, server will not allow bids equal or less than current price/bid.
+    winner = bids_list[0].bidding_user
+    for l in listing:
+        if l.user == request.user:
+            if request.method == "POST":
+                l.is_closed = True
+                l.save()
+
+                return render(request, "auctions/closedlisting.html", {
+                    "message": "This listing is closed.",
+                    "listings": Listing.objects.filter(id=inputListing),
+                    "winner": winner
+                })
+            else:
+                return render(request, "auctions/userlisting.html", {
+                    "listings": Listing.objects.filter(id=inputListing)
+                })
+        else:
+            return render(request, "auctions/listing.html", {
+            "listings": Listing.objects.filter(id=inputListing)
+            })
 
 @login_required
 def bid(request, inputListing):
@@ -120,7 +141,12 @@ def bid(request, inputListing):
                 "error_message": "Your bid needs to be higher than the starting price."
             })
         else:
+
+            add_bid = Bid(bidding_user=request.user, bidded_item=Listing.objects.get(id=inputListing), bid_price=bid_price)
+            add_bid.save()
+
             for listing in Listing.objects.filter(id=inputListing):
                 listing.price = bid_price
                 listing.save()
+
             return redirect(f'/listing/{inputListing}')

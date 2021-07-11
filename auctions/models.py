@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models.deletion import PROTECT
 
 
 class User(AbstractUser):
@@ -12,6 +13,7 @@ class Listing(models.Model):
     price = models.DecimalField(max_digits=12, decimal_places=2)
     description = models.TextField()
     photo = models.ImageField(upload_to='images')
+    is_closed = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.listing} for sale by {self.user} - ${self.price}"
@@ -20,6 +22,9 @@ class Bid(models.Model):
     bidding_user = models.ForeignKey(User, on_delete=models.CASCADE)
     bidded_item = models.ForeignKey(Listing, on_delete=models.CASCADE)
     bid_price = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+
+    def __str__(self):
+        return f"Bid {self.id}: Bid of ${self.bid_price} was placed by {self.bidding_user} on {self.bidded_item}."
 
 class Comment(models.Model):
     user_commenting = models.ForeignKey(User, on_delete=models.CASCADE)

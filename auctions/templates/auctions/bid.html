@@ -3,11 +3,11 @@
 {% block body %}
 
     {% if error_message %}
-        <div>{{ error_message }}
+        <div style="color: red">{{ error_message }}</div>
     {% endif %}
 
     {% for listing in listings %}
-        <h3>{{ listing.listing }}</h3>
+        <h3>{{ listing.listing }}, by {{ listing.user }}</h3>
         <img src={{ listing.photo.url }}>
         <h3>Current Price: ${{ listing.price }}</h3>
     {% endfor %}
