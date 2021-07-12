@@ -2,9 +2,29 @@
 
 {% block body %}
     <h2 class="header">Active Listings</h2>
-    {% for listing in listings %}
-        <ul>
-            <a href="{% url 'listing' listing.id %}"><li>{{ listing }}</li></a>
-        </ul>
-    {% endfor %}
+    <div class="row">
+        {% for listing in listings %}
+            <div class="card">
+                <img src="{{ listing.photo.url }}" class="card-img-top" alt="listing-image">
+                <div class="card-body">
+                    <h5 class="card-title">{{ listing.listing }}</h5>
+                    <p class="card-text">{{ listing.description }}</p>
+                    <p class="card-text" id="price">${{ listing.price }}</p>
+                    <a href="{% url 'listing' listing.id %}" class="btn btn-primary btn-block">View Listing</a>
+                </div>
+            </div>
+        {% endfor %}
+        {% if won %}
+            {% for win in won %}
+                <div class="card">
+                    <img src="{{ win.photo.url }}" class="card-img-top" alt="listing-image">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ win.listing }}</h5>
+                        <p class="card-text">{{ win.description }}</p>
+                        <p class="card-text" id="price">${{ win.price }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
 {% endblock %}

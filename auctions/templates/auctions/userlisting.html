@@ -2,6 +2,9 @@
 
 {% block body %}
     {% for listing in listings %}
+        <h2>Listing: {{ listing.listing}}</h2>
+    {% endfor %}
+    {% for listing in listings %}
         <img src="{{ listing.photo.url }}"><br><br>
         <h2>{{ listing.listing }}</h2><br>
         <h4>Current Bid: ${{ listing.price }}</h4>

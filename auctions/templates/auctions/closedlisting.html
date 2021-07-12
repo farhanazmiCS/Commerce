@@ -4,16 +4,18 @@
     {% if winner %}
         <h2>{{ winner }} has won this listing!</h2>
     {% endif %}
+    {% for listing in listings %}
+        <h2>Listing: {{ listing.listing}}</h2>
+    {% endfor %}
     {% for listing in listings%}
         <img src="{{ listing.photo.url }}"><br><br>
-        <h2>{{ listing.listing }}</h2><br>
         {% if winner %}
             <h4>Winning Bid: ${{ listing.price }}</h4><a href="{% url 'bid' listing.id %}"></a><br>
         {% endif %}
         {% if error_message %}
             <h4 style="color:red">Price: -- </h4><br>
         {% endif%}
-        <h4>Description:</h4>
+        <h4>Description</h4>
         <p>{{ listing.description }}</p>
     {% endfor %}
     {% if error_message %}

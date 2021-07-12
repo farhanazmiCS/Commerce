@@ -16,3 +16,31 @@ textarea {
     height: 200px;
     resize: none;
 }
+
+.card {
+    width: 25rem;
+    margin: 25px;
+}
+
+img {
+    width: 50%;
+    height: auto;
+    border-radius: 10px;
+    padding: 8px;
+}
+
+p {
+    font-size: 20px;
+}
+
+.card-title {
+    text-align: center;
+}
+
+.card-text {
+    text-align: center;
+}
+
+#price {
+    font-weight: bold;
+}
