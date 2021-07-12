@@ -74,21 +74,20 @@ def createlisting(request):
 
         elif request.method == "POST":
 
-            listing_name = request.POST["listing"]
-            listing_price = float(request.POST["price"])
-            listing_description = request.POST["textfield"]
-            image = request.FILES["imagefield"]
-
-        try:
-            add_listing = Listing(user=request.user, listing=listing_name, price=listing_price, description=listing_description, photo=image)
-            add_listing.save()
+            try:
+                listing_name = request.POST["listing"]
+                listing_price = float(request.POST["price"])
+                listing_description = request.POST["textfield"]
+                image = request.FILES["imagefield"]
+                add_listing = Listing(user=request.user, listing=listing_name, price=listing_price, description=listing_description, photo=image)
+                add_listing.save()
             
-        except IntegrityError:
-            return render(request, "auctions/createlisting.html", {
-                "message": "Missing Fields."
-            })
+            except IntegrityError:
+                return render(request, "auctions/createlisting.html", {
+                    "message": "Missing Fields."
+                })
 
-        return HttpResponseRedirect(reverse("index"))
+            return HttpResponseRedirect(reverse("index"))
     else:
         return redirect("login")
     
@@ -137,11 +136,18 @@ def view_listing(request, inputListing):
                         })
                 # GET request method
                 else:
-                    # Load the listing page for the original poster
-                    return render(request, "auctions/userlisting.html", {
-                        "listings": Listing.objects.filter(id=inputListing),
-                        "comments": Comment.objects.filter(commented_on=inputListing)
-                    })
+                    if l.is_closed == True:
+                        return render(request, "auctions/closedlisting.html", {
+                            "message": "This listing is closed.",
+                            "listings": Listing.objects.filter(id=inputListing),
+                            "comments": Comment.objects.filter(commented_on=inputListing)
+                        })
+                    else:
+                        # Load the listing page for the original poster
+                        return render(request, "auctions/userlisting.html", {
+                            "listings": Listing.objects.filter(id=inputListing),
+                            "comments": Comment.objects.filter(commented_on=inputListing)
+                        })
             # Conditions where original lister username does not match logged on user
             else:
                 # If user submits a comment

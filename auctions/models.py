@@ -11,7 +11,7 @@ class Listing(models.Model):
     price = models.DecimalField(max_digits=12, decimal_places=2)
     description = models.TextField()
     photo = models.ImageField(upload_to='images')
-    category = models.CharField(max_length=50, blank=True)
+    category = models.CharField(max_length=50)
     is_closed = models.BooleanField(default=False)
 
     def __str__(self):
