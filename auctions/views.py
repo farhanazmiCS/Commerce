@@ -85,11 +85,7 @@ def createlisting(request):
         
     except IntegrityError:
         return render(request, "auctions/createlisting.html", {
-<<<<<<< HEAD
-            "message": "Something went wrong."
-=======
             "message": "Missing Fields."
->>>>>>> close-listing-feature
         })
 
     return HttpResponseRedirect(reverse("index"))
