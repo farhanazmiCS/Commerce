@@ -1,0 +1,21 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+    {% for listing in listings %}
+        <img src="{{ listing.photo.url }}"><br><br>
+        <h2>{{ listing.listing }}</h2><br>
+        <h4>Current Bid: ${{ listing.price }}</h4>
+        <form method="POST">
+            {% csrf_token %}
+            <input type="submit" name="end" value="Close Auction"></input>
+        </form>
+        <h4>Description:</h4>
+        <p>{{ listing.description }}</p>
+    {% endfor %}
+    <h4>Comments</h4>
+    {% if comments %}
+        {% for comment in comments %}
+            <p>{{ comment }}</p>
+        {% endfor %}
+    {% endif %}
+{% endblock %}

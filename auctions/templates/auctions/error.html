@@ -7,16 +7,13 @@
         <h4>Current Bid: ${{ listing.price }}</h4><a href="{% url 'bid' listing.id %}"><input type="button" value="Place your bid"></a><br>
         <h4>Description:</h4>
         <p>{{ listing.description }}</p><br>
-    {% endfor %}
-        <h4>Comments</h4>
         {% if comments %}
             {% for comment in comments %}
                 <p>{{ comment }}</p>
             {% endfor %}
         {% endif %}
-        <form method="POST">
-            {% csrf_token %}
-            <input type="text" name="comment" size="50" placeholder="Comment"></input>
-            <input type="submit">
-        </form>
+    {% endfor %}
+    {% if error_message %}
+        <h3 style="color: red">{{ error_message }}</h3>
+    {% endif %}
 {% endblock %}
