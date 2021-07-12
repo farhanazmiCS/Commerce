@@ -1,6 +1,18 @@
 {% extends 'auctions/layout.html' %}
 
 {% block body %}
+    {% for listing in listings%}
+        <img src="{{ listing.photo.url }}"><br><br>
+        <h2>{{ listing.listing }}</h2><br>
+        <h4>Current Bid: ${{ listing.price }}</h4><a href="{% url 'bid' listing.id %}"><input type="button" value="Place your bid"></a><br>
+        <h4>Description:</h4>
+        <p>{{ listing.description }}</p><br>
+        {% if comments %}
+            {% for comment in comments %}
+                <p>{{ comment }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
     {% if error_message %}
         <h3 style="color: red">{{ error_message }}</h3>
     {% endif %}

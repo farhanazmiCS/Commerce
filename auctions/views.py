@@ -123,24 +123,39 @@ def view_listing(request, inputListing):
                 # Raise exception if no bidders
                 except:
                     return render(request, "auctions/error.html", {
-                        "error_message": "No bidders."
+                        "error_message": "No bidders.",
+                        "listings": Listing.objects.filter(id=inputListing),
+                        "comments": Comment.objects.filter(commented_on=inputListing)
                     })
                 # Return a page that indicates that the listing is closed
                 return render(request, "auctions/closedlisting.html", {
                     "message": "This listing is closed.",
                     "listings": Listing.objects.filter(id=inputListing),
-                    "winner": winner
+                    "winner": winner,
+                    "comments": Comment.objects.filter(commented_on=inputListing)
                 })
             else:
                 # Load the listing page for the original poster
                 return render(request, "auctions/userlisting.html", {
-                    "listings": Listing.objects.filter(id=inputListing)
+                    "listings": Listing.objects.filter(id=inputListing),
+                    "comments": Comment.objects.filter(commented_on=inputListing)
                 })
         else:
-            # Load the listing page for viewers to bid
-            return render(request, "auctions/listing.html", {
-            "listings": Listing.objects.filter(id=inputListing)
-            })
+            if request.method == "POST":
+                retrieve_comment = request.POST["comment"]
+                user = request.user
+                insert_values = Comment(user_commenting=user, commented_on_id=inputListing, comment=retrieve_comment)
+                insert_values.save()
+                return render(request, "auctions/listing.html", {
+                    "listings": Listing.objects.filter(id=inputListing),
+                    "comments": Comment.objects.filter(commented_on=inputListing)
+                })
+            else:
+                # Load the listing page for viewers to bid
+                return render(request, "auctions/listing.html", {
+                "listings": Listing.objects.filter(id=inputListing),
+                "comments": Comment.objects.filter(commented_on=inputListing)
+                })
 
 @login_required
 def bid(request, inputListing):

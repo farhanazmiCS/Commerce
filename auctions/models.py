@@ -31,6 +31,9 @@ class Comment(models.Model):
     commented_on = models.ForeignKey(Listing, on_delete=models.CASCADE)
     comment = models.CharField(max_length=500)
 
+    def __str__(self):
+        return f"{self.user_commenting} commented: {self.comment}"
+
 class Winner(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
