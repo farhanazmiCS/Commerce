@@ -2,20 +2,24 @@
 
 {% block body %}
     {% for listing in listings %}
-        <h2>Listing: {{ listing.listing}}</h2>
+        <h4>{{ listing.listing }}</h4>
     {% endfor %}
     {% for listing in listings %}
-        <img src="{{ listing.photo.url }}"><br><br>
-        <h2>{{ listing.listing }}</h2><br>
-        <h4>Current Bid: ${{ listing.price }}</h4>
+        <img src="{{ listing.photo.url }}" class="img-fluid">
+        <h4>Listed By</h4>
+        <p>{{ listing.user }}</p>
+        <h4>Category</h4>
+        <p>{{ listing.category }}</p>
+        <h4>Current Bid</h4>
+        <p>${{ listing.price }}</p>
+        <h4>Description:</h4>
+        <p>{{ listing.description }}</p>
         <form method="POST">
             {% csrf_token %}
             <input type="submit" name="end" value="Close Auction"></input>
         </form>
-        <h4>Description:</h4>
-        <p>{{ listing.description }}</p>
     {% endfor %}
-    <h4>Comments</h4>
+    <br><h4>Comments</h4>
     {% if comments %}
         {% for comment in comments %}
             <p>{{ comment }}</p>

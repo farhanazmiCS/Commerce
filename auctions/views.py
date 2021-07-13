@@ -10,6 +10,9 @@ from django import forms
 
 from .models import User, Listing, Bid, Comment, Winner
 
+# Defining a pre-defined list of categories
+categories = ["Technology", "Clothing", "Vehicles", "Accessories", "Others"]
+
 def index(request):
     return render(request, "auctions/index.html", {
         "listings": Listing.objects.filter(is_closed=False)
@@ -70,7 +73,9 @@ def register(request):
 def createlisting(request): 
     if request.user.is_authenticated:
         if request.method == "GET":
-            return render(request, "auctions/createlisting.html")
+            return render(request, "auctions/createlisting.html", {
+                "category": categories
+            })
 
         elif request.method == "POST":
 
@@ -78,8 +83,9 @@ def createlisting(request):
                 listing_name = request.POST["listing"]
                 listing_price = float(request.POST["price"])
                 listing_description = request.POST["textfield"]
+                listing_category = request.POST["category"]
                 image = request.FILES["imagefield"]
-                add_listing = Listing(user=request.user, listing=listing_name, price=listing_price, description=listing_description, photo=image)
+                add_listing = Listing(user=request.user, listing=listing_name, price=listing_price, category=listing_category, description=listing_description, photo=image)
                 add_listing.save()
             
             except IntegrityError:
@@ -91,10 +97,6 @@ def createlisting(request):
     else:
         return redirect("login")
     
-
-@login_required
-def categories(request):
-    pass
 
 def view_listing(request, inputListing):
     if request.user.is_authenticated:
@@ -175,6 +177,7 @@ def view_listing(request, inputListing):
     else:
         return redirect("login")
 
+
 def bid(request, inputListing):
     if request.user.is_authenticated:
         if request.method == "GET":
@@ -211,6 +214,7 @@ def bid(request, inputListing):
     else:
         return redirect("login")
 
+
 def won_listing(request):
     if request.user.is_authenticated:
         # Returns me all the listings that the logged on user has won
@@ -219,5 +223,30 @@ def won_listing(request):
         return render(request, "auctions/won.html", {
             "listings_won": w
         })
+    else:
+        return redirect("login")
+
+# Path to load the categories page
+def category(request):
+    if request.user.is_authenticated:
+        return render(request, "auctions/categories.html", {
+            "categories": categories
+        })
+    else:
+        return redirect("login")
+
+
+# Returns the listings in the requested category
+def category_results(request, category):
+    if request.user.is_authenticated:
+        get_listing_category = Listing.objects.filter(category=category, is_closed=False)
+        if not get_listing_category:
+            return render(request, "auctions/index.html", {
+                "no_listings": "This category has no listings!"
+            })
+        else:
+            return render(request, "auctions/index.html", {
+                "matched": get_listing_category
+            })
     else:
         return redirect("login")

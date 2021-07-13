@@ -22,6 +22,17 @@
             <textarea name="textfield" required></textarea></br>
         </div>
         <div class="form-input">
+            <strong><label for="category">Category</label></strong>
+            <select class="form-control" name="category" required>
+                <!-- Default option value -->
+                <!-- source: https://www.geeksforgeeks.org/how-to-set-the-default-value-for-an-html-select-element/ -->
+                <option value="" selected disabled hidden>Pick Category</option>
+                {% for cat in category %}
+                    <option>{{ cat }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-input">
             <strong><label for="imagefield">Attach Image</label></strong><br>
             <input type="file" name="imagefield" accept="image/*" required><br><br>
         </div>
