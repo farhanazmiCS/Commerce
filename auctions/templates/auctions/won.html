@@ -2,6 +2,9 @@
 
 {% block body %}
     <h2 class="header">Listings Won</h2>
+    {% if message %}
+        <p style="color: red;">{{ message }}</p>
+    {% endif %}
     <div class="row">
         {% for listing in listings_won %}
             <div class="card">
@@ -10,7 +13,7 @@
                     <h5 class="card-title">{{ listing.listing.listing }}</h5>
                     <p class="card-text" style="font-size: 16px;">by {{ listing.listing.user }}</p>
                     <p class="card-text">{{ listing.listing.description }}</p>
-                    <p class="card-text" id="price">${{ listing.listing.price }}</p>
+                    <p class="card-text" id="price">Winning Bid: ${{ listing.listing.price }}</p>
                 </div>
             </div>
         {% endfor %}

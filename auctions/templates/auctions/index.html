@@ -18,7 +18,7 @@
         </div>
     {% endif %}
     {% if matched %}
-        <h2 class="header">Category Listings</h2>
+        <h2 class="header">Category Listings: {{ category }}</h2>
         <div class="row">
             {% for match in matched %}
                 <div class="card">
@@ -34,7 +34,7 @@
         </div>
     {% endif %}
     {% if no_listings %}
-        <h2 class="header">Active Listings</h2>
+        <h2 class="header">Category Listings: {{ category }}</h2>
         <p style="color: red;">{{ no_listings }}</p>
     {% endif %}
 {% endblock %}

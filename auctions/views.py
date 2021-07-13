@@ -219,10 +219,15 @@ def won_listing(request):
     if request.user.is_authenticated:
         # Returns me all the listings that the logged on user has won
         w = Winner.objects.filter(user=request.user)
-        # Queries the "Listing" table, filters by the l
-        return render(request, "auctions/won.html", {
-            "listings_won": w
-        })
+        if not w:
+            return render(request, "auctions/won.html", {
+                "message": "You have not won any listing."
+            })
+        else:
+            # Queries the "Listing" table, filters by the l
+            return render(request, "auctions/won.html", {
+                "listings_won": w
+            })
     else:
         return redirect("login")
 
@@ -242,11 +247,13 @@ def category_results(request, category):
         get_listing_category = Listing.objects.filter(category=category, is_closed=False)
         if not get_listing_category:
             return render(request, "auctions/index.html", {
-                "no_listings": "This category has no listings!"
+                "no_listings": "This category has no listings!",
+                "category": category
             })
         else:
             return render(request, "auctions/index.html", {
-                "matched": get_listing_category
+                "matched": get_listing_category,
+                "category": category
             })
     else:
         return redirect("login")
