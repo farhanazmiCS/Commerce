@@ -1,0 +1,18 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2 class="header">Listings Won</h2>
+    <div class="row">
+        {% for listing in listings_won %}
+            <div class="card">
+                <img src="{{ listing.listing.photo.url }}" class="card-img-top" alt="listing-image">
+                <div class="card-body">
+                    <h5 class="card-title">{{ listing.listing.listing }}</h5>
+                    <p class="card-text" style="font-size: 16px;">by {{ listing.listing.user }}</p>
+                    <p class="card-text">{{ listing.listing.description }}</p>
+                    <p class="card-text" id="price">${{ listing.listing.price }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

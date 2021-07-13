@@ -15,17 +15,4 @@
             </div>
         {% endfor %}
     </div>
-        {% if won %}
-            {% for win in won %}
-                <div class="card">
-                    <img src="{{ win.photo.url }}" class="card-img-top" alt="listing-image">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ win.listing }}</h5>
-                        <p class="card-text">{{ win.description }}</p>
-                        <p class="card-text" id="price">${{ win.price }}</p>
-                    </div>
-                </div>
-            {% endfor %}
-        {% endif %}
-    </div>
 {% endblock %}

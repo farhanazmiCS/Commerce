@@ -214,8 +214,10 @@ def bid(request, inputListing):
 def won_listing(request):
     if request.user.is_authenticated:
         # Returns me all the listings that the logged on user has won
-        listing_won = Winner.objects.filter(user=request.user)
+        w = Winner.objects.filter(user=request.user)
         # Queries the "Listing" table, filters by the l
-        return render(request, "auctions/index.html")
+        return render(request, "auctions/won.html", {
+            "listings_won": w
+        })
     else:
         return redirect("login")
