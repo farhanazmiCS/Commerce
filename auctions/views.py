@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django import forms
 
-from .models import User, Listing, Bid, Comment, Winner
+from .models import User, Listing, Bid, Comment, Winner, Watchlist
 
 # Defining a pre-defined list of categories
 categories = ["Technology", "Clothing", "Vehicles", "Accessories", "Others"]
@@ -169,16 +169,16 @@ def view_listing(request, inputListing):
                             # If the winner of the listing logs in the closed listing and won it, it now indicates so.
                             if winner == request.user:
                                 return render(request, "auctions/closedlisting.html", {
-                                "message": "This listing is closed.",
-                                "you_won": "You have won this listing!",
-                                "listings": Listing.objects.filter(id=inputListing),
-                                "comments": Comment.objects.filter(commented_on=inputListing)
+                                    "message": "This listing is closed.",
+                                    "you_won": "You have won this listing!",
+                                    "listings": Listing.objects.filter(id=inputListing),
+                                    "comments": Comment.objects.filter(commented_on=inputListing)
                                 })
                             else:
                                 return render(request, "auctions/closedlisting.html", {
-                                "message": "This listing is closed.",
-                                "listings": Listing.objects.filter(id=inputListing),
-                                "comments": Comment.objects.filter(commented_on=inputListing)
+                                    "message": "This listing is closed.",
+                                    "listings": Listing.objects.filter(id=inputListing),
+                                    "comments": Comment.objects.filter(commented_on=inputListing)
                                 })
                         else:
                             return render(request, "auctions/listing.html", {
@@ -269,3 +269,19 @@ def category_results(request, category):
             })
     else:
         return redirect("login")
+
+def add_to_watchlist(request):
+    if request.method == "POST":
+        try:
+            retrieve_listing_id = int(request.POST["listing_id"])
+            add = Watchlist(user=request.user, listing_id=retrieve_listing_id)
+            add.save()
+            return redirect(f'listing/{retrieve_listing_id}')
+        except:
+            return render(request, "auctions/error.html", {
+                "listings": Listing.objects.filter(id=retrieve_listing_id),
+                "comments": Comment.objects.filter(commented_on=retrieve_listing_id),
+                "error_message": "Could not add the listing into the watchlist."
+            })
+        
+    

@@ -15,6 +15,8 @@
         {% if error_message %}
             <h4 style="color:red">Price: -- </h4><br>
         {% endif%}
+        <h4>Winning Bid</h4>
+        <p>${{ listing.price }}</p>
         <h4>Description</h4>
         <p>{{ listing.description }}</p>
     {% endfor %}
