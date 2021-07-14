@@ -116,7 +116,7 @@ def view_listing(request, inputListing):
                         bids_list = Bid.objects.filter(bidded_item=inputListing)
                         # The '-' symbol denotes sorting in descending order.
                         bids_list = bids_list.order_by('-bid_price')
-                        # Retrieve the highest bidder
+                        # Declare the winner
                         winner = bids_list[0].bidding_user
                         # Save the winner into the Winner model
                         set_winner = Winner(user=winner, listing=Listing.objects.get(id=inputListing))
@@ -150,7 +150,7 @@ def view_listing(request, inputListing):
                             "listings": Listing.objects.filter(id=inputListing),
                             "comments": Comment.objects.filter(commented_on=inputListing)
                         })
-            # Conditions where original lister username does not match logged on user
+            # For viewers of listing (Not original poster)
             else:
                 # If user submits a comment
                 if request.method == "POST":
@@ -164,6 +164,7 @@ def view_listing(request, inputListing):
                     for l in listing:
                         # If listing is closed, prevent user from bidding.
                         if l.is_closed == True:
+                            # Get the winner
                             winner = Winner.objects.get(user=request.user, listing=l)
                             winner = winner.user
                             # If the winner of the listing logs in the closed listing and won it, it now indicates so.
@@ -174,6 +175,7 @@ def view_listing(request, inputListing):
                                     "listings": Listing.objects.filter(id=inputListing),
                                     "comments": Comment.objects.filter(commented_on=inputListing)
                                 })
+                            # For closed listings, where the logged on user is not the winner.
                             else:
                                 return render(request, "auctions/closedlisting.html", {
                                     "message": "This listing is closed.",
@@ -182,6 +184,8 @@ def view_listing(request, inputListing):
                                 })
                         else:
                             try:
+                                # Attempt to retrieve QuerySet object from Watchlist
+                                # If Watchlist listing matches with the viewed listing, viewed listing is in the user's watchlist
                                 check_watchlist = Watchlist.objects.get(user=request.user, listing=inputListing)
                                 if check_watchlist.listing == l.id:
                                     return render(request, "auctions/listingdelete.html", {
@@ -189,15 +193,17 @@ def view_listing(request, inputListing):
                                         "comments": Comment.objects.filter(commented_on=inputListing)
                                     })
                             except:
+                                # When no QuerySet matches (Empty Queryset, nothing in watchlist), load listing.html and allow the user to add
+                                # the listing into the watchlist
                                 return render(request, "auctions/listing.html", {
                                     "listings": Listing.objects.filter(id=inputListing),
                                     "comments": Comment.objects.filter(commented_on=inputListing)
                                 })
                             return render(request, "auctions/listingdelete.html", {
-                                    "listings": Listing.objects.filter(id=inputListing),
-                                    "comments": Comment.objects.filter(commented_on=inputListing)
-                                })
-                            
+                                "listings": Listing.objects.filter(id=inputListing),
+                                "comments": Comment.objects.filter(commented_on=inputListing)
+                            })      
+    # Redirect users who are not logged on      
     else:
         return redirect("login")
 
