@@ -14,6 +14,7 @@
                     <p class="card-text" style="font-size: 16px;">by {{ listing.listing.user }}</p>
                     <p class="card-text">{{ listing.listing.description }}</p>
                     <p class="card-text" id="price">Winning Bid: ${{ listing.listing.price }}</p>
+                    <a href="{% url 'listing' listing.listing.id %}" class="btn btn-primary btn-block">View Listing</a>
                 </div>
             </div>
         {% endfor %}

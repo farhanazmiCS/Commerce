@@ -164,11 +164,22 @@ def view_listing(request, inputListing):
                     for l in listing:
                         # If listing is closed, prevent user from bidding.
                         if l.is_closed == True:
-                            return render(request, "auctions/closedlisting.html", {
-                            "message": "This listing is closed.",
-                            "listings": Listing.objects.filter(id=inputListing),
-                            "comments": Comment.objects.filter(commented_on=inputListing)
-                        })
+                            winner = Winner.objects.get(user=request.user, listing=l)
+                            winner = winner.user
+                            # If the winner of the listing logs in the closed listing and won it, it now indicates so.
+                            if winner == request.user:
+                                return render(request, "auctions/closedlisting.html", {
+                                "message": "This listing is closed.",
+                                "you_won": "You have won this listing!",
+                                "listings": Listing.objects.filter(id=inputListing),
+                                "comments": Comment.objects.filter(commented_on=inputListing)
+                                })
+                            else:
+                                return render(request, "auctions/closedlisting.html", {
+                                "message": "This listing is closed.",
+                                "listings": Listing.objects.filter(id=inputListing),
+                                "comments": Comment.objects.filter(commented_on=inputListing)
+                                })
                         else:
                             return render(request, "auctions/listing.html", {
                                 "listings": Listing.objects.filter(id=inputListing),
@@ -230,6 +241,7 @@ def won_listing(request):
             })
     else:
         return redirect("login")
+
 
 # Path to load the categories page
 def category(request):
