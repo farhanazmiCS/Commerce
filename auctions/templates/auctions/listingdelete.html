@@ -2,6 +2,9 @@
 
 {% block body %}
     {% for listing in listings %}
+        <h4>{{ listing.listing }}</h4>
+    {% endfor %}
+    {% for listing in listings %}
         <img src="{{ listing.photo.url }}" class="img-fluid">
         <h4>Listed By</h4>
         <p>{{ listing.user }}</p>
@@ -9,11 +12,6 @@
         <p>{{ listing.category }}</p>
         <h4>Current Bid</h4>
         <p>${{ listing.price }}</p><a href="{% url 'bid' listing.id %}"><input type="button" value="Place your bid"></a><br><br>
-        <form method="POST" action="{% url 'watchlist' %}">
-            {% csrf_token %}
-            <input type="hidden" name="listing_id" value={{ listing.id }}></input>
-            <input type="submit" value="Add to Watchlist"></input>
-        </form>
         <form method="POST" action="{% url 'remove' %}">
             {% csrf_token %}
             <input type="hidden" name="listing_id" value={{ listing.id }}></input>
@@ -28,7 +26,9 @@
                 <p>{{ comment }}</p>
             {% endfor %}
         {% endif %}
-    {% if error_message %}
-        <h3 style="color: red">{{ error_message }}</h3>
-    {% endif %}
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="comment" size="50" placeholder="Comment"></input>
+            <input type="submit">
+        </form>
 {% endblock %}

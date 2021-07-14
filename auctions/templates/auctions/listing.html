@@ -12,7 +12,7 @@
         <p>{{ listing.category }}</p>
         <h4>Current Bid</h4>
         <p>${{ listing.price }}</p><a href="{% url 'bid' listing.id %}"><input type="button" value="Place your bid"></a><br><br>
-        <form method="POST" action="{% url 'watchlist' %}">
+        <form method="POST" action="{% url 'add' %}">
             {% csrf_token %}
             <input type="hidden" name="listing_id" value={{ listing.id }}></input>
             <input type="submit" value="Add to Watchlist"></input>

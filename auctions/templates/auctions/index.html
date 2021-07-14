@@ -37,4 +37,26 @@
         <h2 class="header">Category Listings: {{ category }}</h2>
         <p style="color: red;">{{ no_listings }}</p>
     {% endif %}
+
+    {% if empty_watchlist %}
+        <h2 class="header">Watchlist</h2>
+        <p style="color: red;">{{ empty_watchlist }}</p>
+    {% endif %}
+
+    {% if watchlist %}
+        <h2 class="header">Watchlist</h2>
+        <div class="row">
+            {% for watch in watchlist %}
+                <div class="card">
+                    <img src="{{ watch.listing.photo.url }}" class="card-img-top" alt="listing-image">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ watch.listing.listing }}</h5>
+                        <p class="card-text">{{ watch.listing.description }}</p>
+                        <p class="card-text" id="price">${{ watch.listing.price }}</p>
+                        <a href="{% url 'listing' watch.listing.id %}" class="btn btn-primary btn-block">View Listing</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 {% endblock %}

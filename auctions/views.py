@@ -181,10 +181,23 @@ def view_listing(request, inputListing):
                                     "comments": Comment.objects.filter(commented_on=inputListing)
                                 })
                         else:
-                            return render(request, "auctions/listing.html", {
-                                "listings": Listing.objects.filter(id=inputListing),
-                                "comments": Comment.objects.filter(commented_on=inputListing)
-                            })
+                            try:
+                                check_watchlist = Watchlist.objects.get(user=request.user, listing=inputListing)
+                                if check_watchlist.listing == l.id:
+                                    return render(request, "auctions/listingdelete.html", {
+                                        "listings": Listing.objects.filter(id=inputListing),
+                                        "comments": Comment.objects.filter(commented_on=inputListing)
+                                    })
+                            except:
+                                return render(request, "auctions/listing.html", {
+                                    "listings": Listing.objects.filter(id=inputListing),
+                                    "comments": Comment.objects.filter(commented_on=inputListing)
+                                })
+                            return render(request, "auctions/listingdelete.html", {
+                                    "listings": Listing.objects.filter(id=inputListing),
+                                    "comments": Comment.objects.filter(commented_on=inputListing)
+                                })
+                            
     else:
         return redirect("login")
 
@@ -276,12 +289,36 @@ def add_to_watchlist(request):
             retrieve_listing_id = int(request.POST["listing_id"])
             add = Watchlist(user=request.user, listing_id=retrieve_listing_id)
             add.save()
-            return redirect(f'listing/{retrieve_listing_id}')
         except:
             return render(request, "auctions/error.html", {
                 "listings": Listing.objects.filter(id=retrieve_listing_id),
                 "comments": Comment.objects.filter(commented_on=retrieve_listing_id),
                 "error_message": "Could not add the listing into the watchlist."
             })
-        
+        return redirect(f'listing/{retrieve_listing_id}')
+
+def remove_from_watchlist(request):
+    if request.method == "POST":
+        try:
+            retrieve_listing_id = int(request.POST["listing_id"])
+            check = Watchlist.objects.get(user=request.user, listing_id=retrieve_listing_id)
+            if check.listing_id == retrieve_listing_id:
+                check.delete()
+        except:
+            return render(request, "auctions/error.html", {
+                "listings": Listing.objects.filter(id=retrieve_listing_id),
+                "comments": Comment.objects.filter(commented_on=retrieve_listing_id),
+                "error_message": "Could not remove item from watchlist."
+            })
+        return redirect(f'listing/{retrieve_listing_id}')
     
+def watchlist(request):
+    watchlist_listings = Watchlist.objects.filter(user=request.user)
+    if not watchlist_listings:
+        return render(request, "auctions/index.html", {
+            "empty_watchlist": "Your watchlist is empty."
+        })
+    else:
+        return render(request, "auctions/index.html", {
+            "watchlist": watchlist_listings
+        })
