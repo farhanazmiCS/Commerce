@@ -187,7 +187,7 @@ def view_listing(request, inputListing):
                                 # Attempt to retrieve QuerySet object from Watchlist
                                 # If Watchlist listing matches with the viewed listing, viewed listing is in the user's watchlist
                                 check_watchlist = Watchlist.objects.get(user=request.user, listing=inputListing)
-                                if check_watchlist.listing == l.id:
+                                if check_watchlist.listing_id == l.id:
                                     return render(request, "auctions/listingdelete.html", {
                                         "listings": Listing.objects.filter(id=inputListing),
                                         "comments": Comment.objects.filter(commented_on=inputListing)
@@ -199,10 +199,6 @@ def view_listing(request, inputListing):
                                     "listings": Listing.objects.filter(id=inputListing),
                                     "comments": Comment.objects.filter(commented_on=inputListing)
                                 })
-                            return render(request, "auctions/listingdelete.html", {
-                                "listings": Listing.objects.filter(id=inputListing),
-                                "comments": Comment.objects.filter(commented_on=inputListing)
-                            })      
     # Redirect users who are not logged on      
     else:
         return redirect("login")
