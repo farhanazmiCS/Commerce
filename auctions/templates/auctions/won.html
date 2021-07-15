@@ -5,18 +5,23 @@
     {% if message %}
         <p style="color: red;">{{ message }}</p>
     {% endif %}
-    <div class="row">
-        {% for listing in listings_won %}
-            <div class="card">
-                <img src="{{ listing.listing.photo.url }}" class="card-img-top" alt="listing-image">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for listing in listings_won %}
+        <div class="col">
+            <div class="card h-100 text-center">
+                <div class="card-header">
+                    {{ listing.listing.category }}
+                </div>
                 <div class="card-body">
                     <h5 class="card-title">{{ listing.listing.listing }}</h5>
-                    <p class="card-text" style="font-size: 16px;">by {{ listing.listing.user }}</p>
+                    <img src="{{ listing.listing.photo.url }}" class="card-img-top" alt="listing-image">
                     <p class="card-text">{{ listing.listing.description }}</p>
-                    <p class="card-text" id="price">Winning Bid: ${{ listing.listing.price }}</p>
-                    <a href="{% url 'listing' listing.listing.id %}" class="btn btn-primary btn-block">View Listing</a>
+                    <p class="card-text" id="price">${{ listing.listing.price }}</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'listing' listing.listing.id %}" class="btn btn-primary">View Listing</a>
+                    </div>
                 </div>
             </div>
-        {% endfor %}
-    </div>
+        </div>
+    {% endfor %}       
 {% endblock %}

@@ -10,19 +10,24 @@
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-input">
-            <strong><label for="listing">Listing Name</label></strong><br>
-            <input id="name-field" type="text" name="listing" required><br>
+            <strong><label for="listing" class="form-label mb-3">Listing Name</label></strong><br>
+            <input class="form-control" id="name-field" type="text" name="listing" required><br>
         </div>
         <div class="form-input">
-            <strong><label for="price">Listing Price, $</label></strong><br>
-            <input id="price-field" type="number" step="0.01" name="price" required><br>
+            <strong><label for="price" class="form-label mb-3">Listing Price</label></strong>
+            <div class="input-group mb-3">
+                <span class="input-group-text">$</span>
+                <input type="number" class="form-control" name="price" min="0" required>
+            </div>
         </div>
         <div class="form-input">
-            <strong><label for="textfield">Description</label></strong><br>
-            <textarea name="textfield" required></textarea></br>
+            <div class="mb-3">
+                <strong><label for="textfield" class="form-label">Description</label></strong>
+                <textarea class="form-control" id="exampleFormControlTextarea1" name="textfield" rows="3" required></textarea>
+            </div>
         </div>
         <div class="form-input">
-            <strong><label for="category">Category</label></strong>
+            <strong><label for="category" class="form-label">Category</label></strong>
             <select class="form-control" name="category" required>
                 <!-- Default option value -->
                 <!-- source: https://www.geeksforgeeks.org/how-to-set-the-default-value-for-an-html-select-element/ -->
@@ -33,9 +38,15 @@
             </select>
         </div>
         <div class="form-input">
-            <strong><label for="imagefield">Attach Image</label></strong><br>
-            <input type="file" name="imagefield" accept="image/*" required><br><br>
+            <div class="mb-3">
+                <strong><label for="imagefield" class="form-label">Attach Image</label></strong>
+                <input class="form-control" type="file" id="formFile" name="imagefield" accept="image/*" required>
+            </div>
         </div>
-        <input type="submit">
+        <div class="form-input">
+            <div class="d-grid gap-2 col-6 mx-auto">
+                <button class="btn btn-primary" type="submit">Create New Listing</button>
+            </div>
+        </div>
     </form>
 {% endblock %}

@@ -19,8 +19,8 @@
             <input type="submit" name="end" value="Close Auction"></input>
         </form>
     {% endfor %}
-    <br><h4>Comments</h4>
     {% if comments %}
+        <br><h4>Comments</h4>
         {% for comment in comments %}
             <p>{{ comment }}</p>
         {% endfor %}

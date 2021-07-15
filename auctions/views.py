@@ -315,12 +315,15 @@ def remove_from_watchlist(request):
         return redirect(f'listing/{retrieve_listing_id}')
     
 def watchlist(request):
-    watchlist_listings = Watchlist.objects.filter(user=request.user)
-    if not watchlist_listings:
-        return render(request, "auctions/index.html", {
-            "empty_watchlist": "Your watchlist is empty."
-        })
+    if request.user.is_authenticated:
+        watchlist_listings = Watchlist.objects.filter(user=request.user)
+        if not watchlist_listings:
+            return render(request, "auctions/index.html", {
+                "empty_watchlist": "Your watchlist is empty."
+            })
+        else:
+            return render(request, "auctions/index.html", {
+                "watchlist": watchlist_listings
+            })
     else:
-        return render(request, "auctions/index.html", {
-            "watchlist": watchlist_listings
-        })
+        return redirect("login")
