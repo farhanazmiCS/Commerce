@@ -1,31 +1,33 @@
 {% extends 'auctions/layout.html' %}
 
 {% block body %}
-    {% if you_won %}
-        <h2 style="color: green;">{{ you_won }}</h2>
-    {% endif %}
-    {% for listing in listings %}
-        <h4>{{ listing.listing }}</h4>
-    {% endfor %}
-    {% for listing in listings %}
-        <img src="{{ listing.photo.url }}"><br><br>
-        {% if winner %}
-            <h4>Winning Bid: ${{ listing.price }}</h4><a href="{% url 'bid' listing.id %}"></a><br>
+    <div class="container-fluid">
+        {% if you_won %}
+            <h2 style="color: green;">{{ you_won }}</h2>
         {% endif %}
-        <h4>Total number of bids</h4>
-        <p>{{ bids }}</h4>
+        {% for listing in listings %}
+            <h4>{{ listing.listing }}</h4>
+        {% endfor %}
+        {% for listing in listings %}
+            <img src="{{ listing.photo.url }}"><br><br>
+            {% if winner %}
+                <h4>Winning Bid: ${{ listing.price }}</h4><a href="{% url 'bid' listing.id %}"></a><br>
+            {% endif %}
+            <h4>Total number of bids</h4>
+            <p>{{ bids }}</h4>
+            {% if error_message %}
+                <h4 style="color:red">Price: -- </h4><br>
+            {% endif%}
+            <h4>Winning Bid</h4>
+            <p>${{ listing.price }}</p>
+            <h4>Description</h4>
+            <p>{{ listing.description }}</p>
+        {% endfor %}
         {% if error_message %}
-            <h4 style="color:red">Price: -- </h4><br>
-        {% endif%}
-        <h4>Winning Bid</h4>
-        <p>${{ listing.price }}</p>
-        <h4>Description</h4>
-        <p>{{ listing.description }}</p>
-    {% endfor %}
-    {% if error_message %}
-        <p style="color: red">{{ error_message }}</p>
-    {% endif %}
-    {% if message %}
-        <p style="color: red">{{ message }}</p>
-    {% endif %}
+            <p style="color: red">{{ error_message }}</p>
+        {% endif %}
+        {% if message %}
+            <p style="color: red">{{ message }}</p>
+        {% endif %}
+    </div>
 {% endblock %}

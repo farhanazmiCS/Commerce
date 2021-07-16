@@ -1,37 +1,52 @@
 {% extends 'auctions/layout.html' %}
 
 {% block body %}
-    {% for listing in listings %}
-        <h4>{{ listing.listing }}</h4>
-    {% endfor %}
-    {% for listing in listings %}
-        <img src="{{ listing.photo.url }}" class="img-fluid">
-        <h4>Listed By</h4>
-        <p>{{ listing.user }}</p>
-        <h4>Category</h4>
-        <p>{{ listing.category }}</p>
-        <h4>Current Bid</h4>
-        <p>${{ listing.price }}</p>
-        <h4>Total number of bids</h4>
-        <p>{{ bids }}</h4>
-        <a href="{% url 'bid' listing.id %}"><input type="button" value="Place your bid"></a><br><br>
-        <form method="POST" action="{% url 'add' %}">
-            {% csrf_token %}
-            <input type="hidden" name="listing_id" value={{ listing.id }}></input>
-            <input type="submit" value="Add to Watchlist"></input>
-        </form>
-        <br><h4>Description:</h4>
-        <p>{{ listing.description }}</p>
-        {% if comments %}
-            <h4>Comments</h4>
-            {% for comment in comments %}
-                <p>{{ comment }}</p>
-            {% endfor %}
+    <div class="container">
+        {% if error_message %}
+            <p style="color: red;">{{ error_message }}</p>
         {% endif %}
-        <form method="POST" action="{% url 'comment' listing.id %}">
-            {% csrf_token %}
-            <input type="text" name="comment" size="50" placeholder="Comment"></input>
-            <input type="submit">
-        </form>
-    {% endfor %}
+        {% for listing in listings %}
+            <h2>{{ listing.listing }}</h2>
+        {% endfor %}
+        {% for listing in listings %}
+            <img src="{{ listing.photo.url }}" class="img-fluid" style="border: grey solid 1px;">
+            <h4>Listed By</h4>
+            <p>{{ listing.user }}</p>
+            <h4>Category</h4>
+            <p>{{ listing.category }}</p>
+            <h4>Current Bid</h4>
+            <p>${{ listing.price }}</p>
+            <h4>Total number of bids</h4>
+            <p>{{ bids }}</h4><br>
+            <h4>Place your bid</h4>
+            <form method="POST" action="{% url 'bid' listing.id %}">
+                {% csrf_token %}
+                <input type="number" name="bid" step="0.01">
+                <input type="submit" value="Place your bid">
+                {% if error_message %}
+                    <p style="color: red;">{{ error_message }}</p>
+                {% endif %}
+            </form>
+            <form method="POST" action="{% url 'add' %}">
+                {% csrf_token %}
+                <input type="hidden" name="listing_id" value={{ listing.id }}></input>
+                <input type="submit" value="Add to Watchlist"></input>
+            </form>
+            <br><h4>Description:</h4>
+            <p>{{ listing.description }}</p>
+            {% if comments %}
+                <h4>Comments</h4>
+                {% for comment in comments %}
+                    <p>{{ comment }}</p>
+                {% endfor %}
+            {% endif %}
+            <form method="POST" action="{% url 'comment' listing.id %}">
+                {% csrf_token %}
+                <div class="input-group mb-3">
+                    <input class="form-control" type="text" name="comment" size="50" placeholder="Comment"></input>
+                    <button class="btn btn-primary" type="submit">Comment</button>
+                </div>
+            </form>
+        {% endfor %}
+    </div>
 {% endblock %}

@@ -1,35 +1,44 @@
 {% extends 'auctions/layout.html' %}
 
 {% block body %}
-    {% for listing in listings %}
-        <h4>{{ listing.listing }}</h4>
-    {% endfor %}
-    {% for listing in listings %}
-        <img src="{{ listing.photo.url }}" class="img-fluid">
-        <h4>Listed By</h4>
-        <p>{{ listing.user }}</p>
-        <h4>Category</h4>
-        <p>{{ listing.category }}</p>
-        <h4>Current Bid</h4>
-        <p>${{ listing.price }}</p>
-        <h4>Total number of bids</h4>
-        <p>{{ bids }}</h4>
-        <h4>Description:</h4>
-        <p>{{ listing.description }}</p>
+    <div class="container">
+        {% for listing in listings %}
+            <h2>{{ listing.listing }}</h2>
+        {% endfor %}
+        {% for listing in listings %}
+            <img src="{{ listing.photo.url }}" class="img-fluid">
+            <h4>Listed By</h4>
+            <p>{{ listing.user }}</p>
+            <h4>Category</h4>
+            <p>{{ listing.category }}</p>
+            <h4>Current Bid</h4>
+            <p>${{ listing.price }}</p>
+            <h4>Total number of bids</h4>
+            <p>{{ bids }}</h4>
+            <h4>Description:</h4>
+            <p>{{ listing.description }}</p>
+            {% if not comments %}
+                <h4>Comments</h4>
+                <p>No comments on this listing.</p>
+            {% else %}
+                <h4>Comments</h4>
+                {% for comment in comments %}
+                    <p>{{ comment }}</p>
+                {% endfor %}
+            {% endif %}
+            <form method="POST" action="{% url 'comment' listing.id %}">
+                {% csrf_token %}
+                <div class="input-group mb-3">
+                    <input class="form-control" type="text" name="comment" size="50" placeholder="Comment"></input>
+                    <button class="btn btn-primary" type="submit">Comment</button>
+                </div>
+            </form>
+        {% endfor %}
         <form method="POST">
             {% csrf_token %}
-            <input type="submit" name="end" value="Close Auction"></input>
+            <div class="form-input">
+                <input type="submit" name="end" value="Close Auction"></input>
+            </div>
         </form>
-        <form method="POST" action="{% url 'comment' listing.id %}">
-            {% csrf_token %}
-            <input type="text" name="comment" size="50" placeholder="Comment"></input>
-            <input type="submit">
-        </form>
-    {% endfor %}
-    {% if comments %}
-        <br><h4>Comments</h4>
-        {% for comment in comments %}
-            <p>{{ comment }}</p>
-        {% endfor %}
-    {% endif %}
+    </div>
 {% endblock %}

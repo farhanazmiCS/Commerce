@@ -205,19 +205,38 @@ def view_listing(request, inputListing):
 def bid(request, inputListing):
     if request.user.is_authenticated:
         if request.method == "GET":
-            return render(request, "auctions/bid.html", {
-                "listings": Listing.objects.filter(id=inputListing)
-            })
+            if not Watchlist.objects.filter(user=request.user, listing=inputListing):
+                return render(request, "auctions/listing.html", {
+                    "listings": Listing.objects.filter(id=inputListing),
+                    "comments": Comment.objects.filter(commented_on=inputListing),
+                    "bids": Bid.objects.filter(bidded_item=inputListing).count()
+                })
+            else:
+                return render(request, "auctions/listingdelete.html", {
+                    "listings": Listing.objects.filter(id=inputListing),
+                    "comments": Comment.objects.filter(commented_on=inputListing),
+                    "bids": Bid.objects.filter(bidded_item=inputListing).count()
+                })
         elif request.method == "POST":
             try:
                 get_price = request.POST["bid"]
                 bid_price = float(get_price)
 
             except ValueError:
-                return render(request, "auctions/bid.html", {
-                    "listings": Listing.objects.filter(id=inputListing),
-                    "error_message": "Enter a numerical value."
-                })
+                if not Watchlist.objects.filter(user=request.user, listing=inputListing):
+                    return render(request, "auctions/listing.html", {
+                        "listings": Listing.objects.filter(id=inputListing),
+                        "comments": Comment.objects.filter(commented_on=inputListing),
+                        "bids": Bid.objects.filter(bidded_item=inputListing).count(),
+                        "error_message": "Enter a numerical value."
+                    })
+                else:
+                    return render(request, "auctions/listingdelete.html", {
+                        "listings": Listing.objects.filter(id=inputListing),
+                        "comments": Comment.objects.filter(commented_on=inputListing),
+                        "bids": Bid.objects.filter(bidded_item=inputListing).count(),
+                        "error_message": "Enter a numerical value."
+                    })
 
             # Retrieve the current price
             for listing in Listing.objects.filter(id=inputListing):
@@ -227,30 +246,50 @@ def bid(request, inputListing):
             if not Bid.objects.filter(bidded_item=inputListing):
                 # If bid price is less than the current price, present an error
                 if bid_price < current_price:
-                    return render(request, "auctions/bid.html", {
-                    "listings": Listing.objects.filter(id=inputListing),
-                    "error_message": "Your bid needs to be equal or higher than the starting price."
-                })
-                # If bid price is EQUAL or HIGHER than the current price, save the bid
+                    if not Watchlist.objects.filter(user=request.user, listing=inputListing):
+                        return render(request, "auctions/listing.html", {
+                            "listings": Listing.objects.filter(id=inputListing),
+                            "comments": Comment.objects.filter(commented_on=inputListing),
+                            "bids": Bid.objects.filter(bidded_item=inputListing).count(),
+                            "error_message": "Your bid needs to be equal or higher than the starting price."
+                        })
+                    else:
+                        return render(request, "auctions/listingdelete.html", {
+                            "listings": Listing.objects.filter(id=inputListing),
+                            "comments": Comment.objects.filter(commented_on=inputListing),
+                            "bids": Bid.objects.filter(bidded_item=inputListing).count(),
+                            "error_message": "Your bid needs to be equal or higher than the starting price."
+                        })
                 else:
+                    # If bid price is EQUAL or HIGHER than the current price, save the bid
                     add_bid = Bid(bidding_user=request.user, bidded_item=Listing.objects.get(id=inputListing), bid_price=bid_price)
                     add_bid.save()
                 
-                # Save the bid price into the listing
-                for listing in Listing.objects.filter(id=inputListing):
-                    listing.price = bid_price
-                    listing.save()
+                    # Save the bid price into the listing
+                    for listing in Listing.objects.filter(id=inputListing):
+                        listing.price = bid_price
+                        listing.save()
 
-                return redirect(f'/listing/{inputListing}')
+                    return redirect(f'/listing/{inputListing}')
                 
             # If queryset does have bids present
             else:
                 # Present an error if bid price is not more than current price
                 if bid_price <= current_price:
-                    return render(request, "auctions/bid.html", {
-                        "listings": Listing.objects.filter(id=inputListing),
-                        "error_message": "Your bid needs to be higher than the starting price."
-                    })
+                    if not Watchlist.objects.filter(user=request.user, listing=inputListing):
+                        return render(request, "auctions/listing.html", {
+                            "listings": Listing.objects.filter(id=inputListing),
+                            "comments": Comment.objects.filter(commented_on=inputListing),
+                            "bids": Bid.objects.filter(bidded_item=inputListing).count(),
+                            "error_message": "Your bid needs to be higher than the starting price."
+                        })
+                    else:
+                        return render(request, "auctions/listingdelete.html", {
+                            "listings": Listing.objects.filter(id=inputListing),
+                            "comments": Comment.objects.filter(commented_on=inputListing),
+                            "bids": Bid.objects.filter(bidded_item=inputListing).count(),
+                            "error_message": "Your bid needs to be higher than the starting price."
+                        })
                 # Add the bid
                 else:
 
