@@ -11,24 +11,27 @@
         <h4>Category</h4>
         <p>{{ listing.category }}</p>
         <h4>Current Bid</h4>
-        <p>${{ listing.price }}</p><a href="{% url 'bid' listing.id %}"><input type="button" value="Place your bid"></a><br><br>
+        <p>${{ listing.price }}</p>
+        <h4>Total number of bids</h4>
+        <p>{{ bids }}</h4>
+        <a href="{% url 'bid' listing.id %}"><input type="button" value="Place your bid"></a><br><br>
         <form method="POST" action="{% url 'add' %}">
             {% csrf_token %}
             <input type="hidden" name="listing_id" value={{ listing.id }}></input>
             <input type="submit" value="Add to Watchlist"></input>
         </form>
         <br><h4>Description:</h4>
-        <p>{{ listing.description }}</p><br>
-    {% endfor %}
+        <p>{{ listing.description }}</p>
         {% if comments %}
             <h4>Comments</h4>
             {% for comment in comments %}
                 <p>{{ comment }}</p>
             {% endfor %}
         {% endif %}
-        <form method="POST">
+        <form method="POST" action="{% url 'comment' listing.id %}">
             {% csrf_token %}
             <input type="text" name="comment" size="50" placeholder="Comment"></input>
             <input type="submit">
         </form>
+    {% endfor %}
 {% endblock %}

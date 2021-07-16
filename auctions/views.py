@@ -126,7 +126,8 @@ def view_listing(request, inputListing):
                             "message": "This listing is closed.",
                             "listings": Listing.objects.filter(id=inputListing),
                             "winner": winner,
-                            "comments": Comment.objects.filter(commented_on=inputListing)
+                            "comments": Comment.objects.filter(commented_on=inputListing),
+                            "bids": Bid.objects.filter(bidded_item=inputListing).count()
                         })
                     # Raise exception if no bidders
                     except:
@@ -142,63 +143,60 @@ def view_listing(request, inputListing):
                         return render(request, "auctions/closedlisting.html", {
                             "message": "This listing is closed.",
                             "listings": Listing.objects.filter(id=inputListing),
-                            "comments": Comment.objects.filter(commented_on=inputListing)
+                            "comments": Comment.objects.filter(commented_on=inputListing),
+                            "bids": Bid.objects.filter(bidded_item=inputListing).count()
                         })
                     else:
                         # Load the listing page for the original poster
                         return render(request, "auctions/userlisting.html", {
                             "listings": Listing.objects.filter(id=inputListing),
-                            "comments": Comment.objects.filter(commented_on=inputListing)
+                            "comments": Comment.objects.filter(commented_on=inputListing),
+                            "bids": Bid.objects.filter(bidded_item=inputListing).count()
                         })
             # For viewers of listing (Not original poster)
             else:
-                # If user submits a comment
-                if request.method == "POST":
-                    retrieve_comment = request.POST["comment"]
-                    user = request.user
-                    insert_values = Comment(user_commenting=user, commented_on_id=inputListing, comment=retrieve_comment)
-                    insert_values.save()
-                    return redirect(f'/listing/{inputListing}')
-                # GET request method (Load the page)
-                else:
-                    for l in listing:
-                        # If listing is closed, prevent user from bidding.
-                        if l.is_closed == True:
-                            # Get the winner
-                            winner = Winner.objects.get(user=request.user, listing=l)
-                            winner = winner.user
-                            # If the winner of the listing logs in the closed listing and won it, it now indicates so.
-                            if winner == request.user:
-                                return render(request, "auctions/closedlisting.html", {
-                                    "message": "This listing is closed.",
-                                    "you_won": "You have won this listing!",
-                                    "listings": Listing.objects.filter(id=inputListing),
-                                    "comments": Comment.objects.filter(commented_on=inputListing)
-                                })
-                            # For closed listings, where the logged on user is not the winner.
-                            else:
-                                return render(request, "auctions/closedlisting.html", {
-                                    "message": "This listing is closed.",
-                                    "listings": Listing.objects.filter(id=inputListing),
-                                    "comments": Comment.objects.filter(commented_on=inputListing)
-                                })
+                for l in listing:
+                    # If listing is closed, prevent user from bidding.
+                    if l.is_closed == True:
+                        # Get the winner
+                        winner = Winner.objects.get(user=request.user, listing=l)
+                        winner = winner.user
+                        # If the winner of the listing logs in the closed listing and won it, it now indicates so.
+                        if winner == request.user:
+                            return render(request, "auctions/closedlisting.html", {
+                                "message": "This listing is closed.",
+                                "you_won": "You have won this listing!",
+                                "listings": Listing.objects.filter(id=inputListing),
+                                "comments": Comment.objects.filter(commented_on=inputListing),
+                                "bids": Bid.objects.filter(bidded_item=inputListing).count()
+                            })
+                        # For closed listings, where the logged on user is not the winner.
                         else:
-                            try:
-                                # Attempt to retrieve QuerySet object from Watchlist
-                                # If Watchlist listing matches with the viewed listing, viewed listing is in the user's watchlist
-                                check_watchlist = Watchlist.objects.get(user=request.user, listing=inputListing)
-                                if check_watchlist.listing_id == l.id:
-                                    return render(request, "auctions/listingdelete.html", {
-                                        "listings": Listing.objects.filter(id=inputListing),
-                                        "comments": Comment.objects.filter(commented_on=inputListing)
-                                    })
-                            except:
-                                # When no QuerySet matches (Empty Queryset, nothing in watchlist), load listing.html and allow the user to add
-                                # the listing into the watchlist
-                                return render(request, "auctions/listing.html", {
+                            return render(request, "auctions/closedlisting.html", {
+                                "message": "This listing is closed.",
+                                "listings": Listing.objects.filter(id=inputListing),
+                                "comments": Comment.objects.filter(commented_on=inputListing),
+                                "bids": Bid.objects.filter(bidded_item=inputListing).count()
+                            })
+                    else:
+                        try:
+                            # Attempt to retrieve QuerySet object from Watchlist
+                            # If Watchlist listing matches with the viewed listing, viewed listing is in the user's watchlist
+                            check_watchlist = Watchlist.objects.get(user=request.user, listing=inputListing)
+                            if check_watchlist.listing_id == l.id:
+                                return render(request, "auctions/listingdelete.html", {
                                     "listings": Listing.objects.filter(id=inputListing),
-                                    "comments": Comment.objects.filter(commented_on=inputListing)
+                                    "comments": Comment.objects.filter(commented_on=inputListing),
+                                    "bids": Bid.objects.filter(bidded_item=inputListing).count()
                                 })
+                        except:
+                            # When no QuerySet matches (Empty Queryset, nothing in watchlist), load listing.html and allow the user to add
+                            # the listing into the watchlist
+                            return render(request, "auctions/listing.html", {
+                                "listings": Listing.objects.filter(id=inputListing),
+                                "comments": Comment.objects.filter(commented_on=inputListing),
+                                "bids": Bid.objects.filter(bidded_item=inputListing).count()
+                            })
     # Redirect users who are not logged on      
     else:
         return redirect("login")
@@ -214,29 +212,56 @@ def bid(request, inputListing):
             try:
                 get_price = request.POST["bid"]
                 bid_price = float(get_price)
+
             except ValueError:
                 return render(request, "auctions/bid.html", {
                     "listings": Listing.objects.filter(id=inputListing),
                     "error_message": "Enter a numerical value."
                 })
+
+            # Retrieve the current price
             for listing in Listing.objects.filter(id=inputListing):
                 current_price = float(listing.price)
 
-            if bid_price <= current_price:
-                return render(request, "auctions/bid.html", {
+            # If query is empty
+            if not Bid.objects.filter(bidded_item=inputListing):
+                # If bid price is less than the current price, present an error
+                if bid_price < current_price:
+                    return render(request, "auctions/bid.html", {
                     "listings": Listing.objects.filter(id=inputListing),
-                    "error_message": "Your bid needs to be higher than the starting price."
+                    "error_message": "Your bid needs to be equal or higher than the starting price."
                 })
-            else:
-
-                add_bid = Bid(bidding_user=request.user, bidded_item=Listing.objects.get(id=inputListing), bid_price=bid_price)
-                add_bid.save()
-
+                # If bid price is EQUAL or HIGHER than the current price, save the bid
+                else:
+                    add_bid = Bid(bidding_user=request.user, bidded_item=Listing.objects.get(id=inputListing), bid_price=bid_price)
+                    add_bid.save()
+                
+                # Save the bid price into the listing
                 for listing in Listing.objects.filter(id=inputListing):
                     listing.price = bid_price
                     listing.save()
 
                 return redirect(f'/listing/{inputListing}')
+                
+            # If queryset does have bids present
+            else:
+                # Present an error if bid price is not more than current price
+                if bid_price <= current_price:
+                    return render(request, "auctions/bid.html", {
+                        "listings": Listing.objects.filter(id=inputListing),
+                        "error_message": "Your bid needs to be higher than the starting price."
+                    })
+                # Add the bid
+                else:
+
+                    add_bid = Bid(bidding_user=request.user, bidded_item=Listing.objects.get(id=inputListing), bid_price=bid_price)
+                    add_bid.save()
+
+                    for listing in Listing.objects.filter(id=inputListing):
+                        listing.price = bid_price
+                        listing.save()
+
+                    return redirect(f'/listing/{inputListing}')
     else:
         return redirect("login")
 
@@ -295,7 +320,8 @@ def add_to_watchlist(request):
             return render(request, "auctions/error.html", {
                 "listings": Listing.objects.filter(id=retrieve_listing_id),
                 "comments": Comment.objects.filter(commented_on=retrieve_listing_id),
-                "error_message": "Could not add the listing into the watchlist."
+                "error_message": "Could not add the listing into the watchlist.",
+                "bids": Bid.objects.filter(bidded_item=retrieve_listing_id).count()
             })
         return redirect(f'listing/{retrieve_listing_id}')
 
@@ -310,7 +336,8 @@ def remove_from_watchlist(request):
             return render(request, "auctions/error.html", {
                 "listings": Listing.objects.filter(id=retrieve_listing_id),
                 "comments": Comment.objects.filter(commented_on=retrieve_listing_id),
-                "error_message": "Could not remove item from watchlist."
+                "error_message": "Could not remove item from watchlist.",
+                "bids": Bid.objects.filter(bidded_item=retrieve_listing_id).count()
             })
         return redirect(f'listing/{retrieve_listing_id}')
     
@@ -327,3 +354,30 @@ def watchlist(request):
             })
     else:
         return redirect("login")
+
+def comment(request, inputListing):
+    # For original lister
+    op = Listing.objects.filter(id=inputListing, user=request.user)
+    for o in op:
+        if o.user_id == request.user:
+            if request.method == "POST":
+                retrieve_comment = request.POST["comment"]
+                user = request.user
+                insert_values = Comment(user_commenting=user, commented_on_id=inputListing, comment=retrieve_comment)
+                insert_values.save()
+                return redirect(f"/listing/{inputListing}")
+            else:
+                return render(request, "auctions/userlisting.html", {
+                    "listings": Listing.objects.filter(id=inputListing),
+                    "comments": Comment.objects.filter(commented_on=inputListing)
+                })
+    else:
+        # For non-original listers
+        if request.method == "POST":
+            retrieve_comment = request.POST["comment"]
+            user = request.user
+            insert_values = Comment(user_commenting=user, commented_on_id=inputListing, comment=retrieve_comment)
+            insert_values.save()
+            return redirect(f"/listing/{inputListing}")
+        else:
+            return redirect(f"/listing/{inputListing}")

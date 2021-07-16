@@ -12,11 +12,18 @@
         <p>{{ listing.category }}</p>
         <h4>Current Bid</h4>
         <p>${{ listing.price }}</p>
+        <h4>Total number of bids</h4>
+        <p>{{ bids }}</h4>
         <h4>Description:</h4>
         <p>{{ listing.description }}</p>
         <form method="POST">
             {% csrf_token %}
             <input type="submit" name="end" value="Close Auction"></input>
+        </form>
+        <form method="POST" action="{% url 'comment' listing.id %}">
+            {% csrf_token %}
+            <input type="text" name="comment" size="50" placeholder="Comment"></input>
+            <input type="submit">
         </form>
     {% endfor %}
     {% if comments %}

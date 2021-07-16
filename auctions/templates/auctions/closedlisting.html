@@ -12,6 +12,8 @@
         {% if winner %}
             <h4>Winning Bid: ${{ listing.price }}</h4><a href="{% url 'bid' listing.id %}"></a><br>
         {% endif %}
+        <h4>Total number of bids</h4>
+        <p>{{ bids }}</h4>
         {% if error_message %}
             <h4 style="color:red">Price: -- </h4><br>
         {% endif%}

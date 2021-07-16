@@ -11,22 +11,22 @@
         <h1 class="header">Auctions</h1>
         <div class="header">
             {% if user.is_authenticated %}
-                Signed in as <strong>{{ user.username }}</strong>.
+                Hello, <strong>{{ user.username }}</strong>.
             {% else %}
                 Not signed in.
             {% endif %}
         </div>
         <ul class="nav">
             <li class="nav-item">
-                    <a class="nav-link" href="{% url 'create' %}">New Listing</a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" href="{% url 'index' %}">Active Listings</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'categories' %}">Categories</a>
-            </li>
             {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'create' %}">New Listing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'categories' %}">Categories</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'won' %}">Won Listings</a>
                 </li>
