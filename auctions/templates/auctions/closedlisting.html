@@ -1,7 +1,7 @@
 {% extends 'auctions/layout.html' %}
 
 {% block body %}
-    <div class="container-fluid">
+    <div class="container">
         {% if you_won %}
             <h2 style="color: green;">{{ you_won }}</h2>
         {% endif %}
@@ -22,6 +22,15 @@
             <p>${{ listing.price }}</p>
             <h4>Description</h4>
             <p>{{ listing.description }}</p>
+            {% if not comments %}
+                <h4>Comments</h4>
+                <p>No comments on this listing.</p>
+            {% else %}
+                <h4>Comments</h4>
+                {% for comment in comments %}
+                    <p>{{ comment }}</p>
+                {% endfor %}
+            {% endif %}
         {% endfor %}
         {% if error_message %}
             <p style="color: red">{{ error_message }}</p>

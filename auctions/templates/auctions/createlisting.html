@@ -1,52 +1,59 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+    <div class="container">
+        {% if messages %}
+            <div>{{ message }}</div>
+        {% endif %}
 
-  {% if messages %}
-        <div>{{ message }}</div>
-  {% endif %}
-  
-    <strong><h2 class="header">Create New Listing</h2></strong>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="form-input">
-            <strong><label for="listing" class="form-label mb-3">Listing Name</label></strong><br>
-            <input class="form-control" id="name-field" type="text" name="listing" required><br>
+        <div class="mb-3">
+            <strong><h2 class="header">Create New Listing</h2></strong>
         </div>
-        <div class="form-input">
-            <strong><label for="price" class="form-label mb-3">Listing Price</label></strong>
-            <div class="input-group mb-3">
-                <span class="input-group-text">$</span>
-                <input type="number" class="form-control" name="price" min="0" required>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-input">
+                <div class="mb-3">
+                    <strong><label for="listing" class="form-label mb-3">Listing Name</label></strong>
+                    <input class="form-control" id="name-field" type="text" name="listing" required>
+                </div>
             </div>
-        </div>
-        <div class="form-input">
-            <div class="mb-3">
-                <strong><label for="textfield" class="form-label">Description</label></strong>
-                <textarea class="form-control" id="exampleFormControlTextarea1" name="textfield" rows="3" required></textarea>
+            <div class="form-input">
+                <strong><label for="price" class="form-label mb-3">Listing Price</label></strong>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">$</span>
+                    <input type="number" class="form-control" name="price" min="0" required>
+                </div>
             </div>
-        </div>
-        <div class="form-input">
-            <strong><label for="category" class="form-label">Category</label></strong>
-            <select class="form-control" name="category" required>
-                <!-- Default option value -->
-                <!-- source: https://www.geeksforgeeks.org/how-to-set-the-default-value-for-an-html-select-element/ -->
-                <option value="" selected disabled hidden>Pick Category</option>
-                {% for cat in category %}
-                    <option>{{ cat }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="form-input">
-            <div class="mb-3">
-                <strong><label for="imagefield" class="form-label">Attach Image</label></strong>
-                <input class="form-control" type="file" id="formFile" name="imagefield" accept="image/*" required>
+            <div class="form-input">
+                <div class="mb-3">
+                    <strong><label for="textfield" class="form-label">Description</label></strong>
+                    <textarea class="form-control" id="exampleFormControlTextarea1" name="textfield" rows="3" required></textarea>
+                </div>
             </div>
-        </div>
-        <div class="form-input">
-            <div class="d-grid gap-2 col-6 mx-auto">
-                <button class="btn btn-primary" type="submit">Create New Listing</button>
+            <div class="form-input">
+                <strong><label for="category" class="form-label">Category</label></strong>
+                <div class="mb-3">
+                    <select class="form-control" name="category" required>
+                        <!-- Default option value -->
+                        <!-- source: https://www.geeksforgeeks.org/how-to-set-the-default-value-for-an-html-select-element/ -->
+                        <option value="" selected disabled hidden>Pick Category</option>
+                        {% for cat in category %}
+                            <option>{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
-        </div>
-    </form>
+            <div class="form-input">
+                <div class="mb-3">
+                    <strong><label for="imagefield" class="form-label">Attach Image</label></strong>
+                    <input class="form-control" type="file" id="formFile" name="imagefield" accept="image/*" required>
+                </div>
+            </div>
+            <div class="form-input">
+                    <div class="d-grid gap-2 col-5 mx-auto">
+                        <button class="btn btn-primary" type="submit">Create New Listing</button>
+                    </div>
+            </div>
+        </form>
+    </div>
 {% endblock %}

@@ -281,14 +281,14 @@ def bid(request, inputListing):
                             "listings": Listing.objects.filter(id=inputListing),
                             "comments": Comment.objects.filter(commented_on=inputListing),
                             "bids": Bid.objects.filter(bidded_item=inputListing).count(),
-                            "error_message": "Your bid needs to be higher than the starting price."
+                            "error_message": "Your bid needs to be higher than the previous bid."
                         })
                     else:
                         return render(request, "auctions/listingdelete.html", {
                             "listings": Listing.objects.filter(id=inputListing),
                             "comments": Comment.objects.filter(commented_on=inputListing),
                             "bids": Bid.objects.filter(bidded_item=inputListing).count(),
-                            "error_message": "Your bid needs to be higher than the starting price."
+                            "error_message": "Your bid needs to be higher than the previous bid."
                         })
                 # Add the bid
                 else:

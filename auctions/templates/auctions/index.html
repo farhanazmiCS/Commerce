@@ -1,80 +1,82 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    {% if listings %}
-        <h2 class="header">Active Listings</h2>
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-            {% for listing in listings %}
-                <div class="col">
-                    <div class="card h-100 text-center">
-                        <div class="card-header">
-                            {{ listing.category }}
-                        </div>
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">{{ listing.listing }}</h5>
-                            <img src="{{ listing.photo.url }}" class="card-img-top" alt="listing-image">
-                            <p class="card-text">{{ listing.description }}</p>
-                            <p class="card-text" id="price">${{ listing.price }}</p>
-                            <div class="d-grid gap-2">
-                                <a href="{% url 'listing' listing.id %}" class="btn btn-primary" type="button">View Listing</a>
+    <div class="container">
+        {% if listings %}
+            <h2 class="header">Active Listings</h2>
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for listing in listings %}
+                    <div class="col">
+                        <div class="card h-100 text-center">
+                            <div class="card-header">
+                                {{ listing.category }}
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">{{ listing.listing }}</h5>
+                                <img src="{{ listing.photo.url }}" class="img-thumbnail" alt="listing-image">
+                                <p class="card-text">{{ listing.description }}</p>
+                                <p class="card-text" id="price">${{ listing.price }}</p>
+                                <div class="d-grid gap-2">
+                                    <a href="{% url 'listing' listing.id %}" class="btn btn-primary" type="button">View Listing</a>
+                                </div>
                             </div>
                         </div>
                     </div>
+                {% endfor %}
                 </div>
-            {% endfor %}
-            </div>
-    {% endif %}
-    {% if matched %}
-        <h2 class="header">Category Listings: {{ category }}</h2>
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-            {% for match in matched %}
-                <div class="col">
-                    <div class="card h-100 text-center">
-                        <div class="card-header">
-                            {{ match.category }}
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">{{ match.listing }}</h5>
-                            <img src="{{ match.photo.url }}" class="card-img-top" alt="listing-image">
-                            <p class="card-text">{{ match.description }}</p>
-                            <p class="card-text" id="price">${{ match.price }}</p>
-                            <div class="d-grid gap-2">
-                                <a href="{% url 'listing' match.id %}" class="btn btn-primary">View Listing</a>
+        {% endif %}
+        {% if matched %}
+            <h2 class="header">Category Listings: {{ category }}</h2>
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for match in matched %}
+                    <div class="col">
+                        <div class="card h-100 text-center">
+                            <div class="card-header">
+                                {{ match.category }}
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ match.listing }}</h5>
+                                <img src="{{ match.photo.url }}" class="img-thumbnail" alt="listing-image">
+                                <p class="card-text">{{ match.description }}</p>
+                                <p class="card-text" id="price">${{ match.price }}</p>
+                                <div class="d-grid gap-2">
+                                    <a href="{% url 'listing' match.id %}" class="btn btn-primary">View Listing</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
-    {% endif %}
-    {% if no_listings %}
-        <h2 class="header">Category Listings: {{ category }}</h2>
-        <p style="color: red;">{{ no_listings }}</p>
-    {% endif %}
+                {% endfor %}
+        {% endif %}
+        {% if no_listings %}
+            <h2 class="header">Category Listings: {{ category }}</h2>
+            <p style="color: red;">{{ no_listings }}</p>
+        {% endif %}
 
-    {% if empty_watchlist %}
-        <h2 class="header">Watchlist</h2>
-        <p style="color: red;">{{ empty_watchlist }}</p>
-    {% endif %}
-    {% if watchlist %}
-        <h2 class="header">Watchlist</h2>
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-            {% for watch in watchlist %}
-                <div class="col">
-                    <div class="card h-100 text-center">
-                        <div class="card-header">
-                            {{ watch.listing.category }}
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">{{ watch.listing.listing }}</h5>
-                            <img src="{{ watch.listing.photo.url }}" class="card-img-top" alt="listing-image">
-                            <p class="card-text">{{ watch.listing.description }}</p>
-                            <p class="card-text" id="price">${{ watch.listing.price }}</p>
-                            <div class="d-grid gap-2">
-                                <a href="{% url 'listing' watch.listing.id %}" class="btn btn-primary">View Listing</a>
+        {% if empty_watchlist %}
+            <h2 class="header">Watchlist</h2>
+            <p style="color: red;">{{ empty_watchlist }}</p>
+        {% endif %}
+        {% if watchlist %}
+            <h2 class="header">Watchlist</h2>
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for watch in watchlist %}
+                    <div class="col">
+                        <div class="card h-100 text-center">
+                            <div class="card-header">
+                                {{ watch.listing.category }}
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ watch.listing.listing }}</h5>
+                                <img src="{{ watch.listing.photo.url }}" class="img-thumbnail" alt="listing-image">
+                                <p class="card-text">{{ watch.listing.description }}</p>
+                                <p class="card-text" id="price">${{ watch.listing.price }}</p>
+                                <div class="d-grid gap-2">
+                                    <a href="{% url 'listing' watch.listing.id %}" class="btn btn-primary">View Listing</a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            {% endfor %}
-    {% endif %}
+                {% endfor %}
+        {% endif %}
+    </div>
 {% endblock %}

@@ -6,7 +6,9 @@
             <h2>{{ listing.listing }}</h2>
         {% endfor %}
         {% for listing in listings %}
-            <img src="{{ listing.photo.url }}" class="img-fluid">
+            <div class="input-group mb-3">
+                <img src="{{ listing.photo.url }}" class="img-fluid">
+            </div>
             <h4>Listed By</h4>
             <p>{{ listing.user }}</p>
             <h4>Category</h4>
@@ -17,12 +19,15 @@
             <p>{{ bids }}</h4>
             <form method="POST" action="{% url 'bid' listing.id %}">
                 {% csrf_token %}
-                <input type="number" name="bid" step="0.01">
-                <input type="submit" value="Place your bid">
+                <div class="input-group mb-3">
+                    <span class="input-group-text">$</span>
+                    <input type="number" class="form-control" name="bid" step="0.01" min="0">
+                    <button class="btn btn-primary" type="submit">Place your bid</button>
+                </div>
                 {% if error_message %}
                     <p style="color: red;">{{ error_message }}</p>
                 {% endif %}
-            </form>            
+            </form>   
             <form method="POST" action="{% url 'remove' %}">
                 {% csrf_token %}
                 <input type="hidden" name="listing_id" value={{ listing.id }}></input>
@@ -30,7 +35,10 @@
             </form>
             <br><h4>Description:</h4>
             <p>{{ listing.description }}</p>
-            {% if comments %}
+            {% if not comments %}
+                <h4>Comments</h4>
+                <p>No comments on this listing</p>
+            {% else %}
                 <h4>Comments</h4>
                 {% for comment in comments %}
                     <p>{{ comment }}</p>
@@ -39,7 +47,7 @@
             <form method="POST" action="{% url 'comment' listing.id %}">
                 {% csrf_token %}
                 <div class="input-group mb-3">
-                    <input class="form-control" type="text" name="comment" size="50" placeholder="Comment"></input>
+                    <input class="form-control" type="text" name="comment" size="50" placeholder="Comment" required></input>
                     <button class="btn btn-primary" type="submit">Comment</button>
                 </div>
             </form>

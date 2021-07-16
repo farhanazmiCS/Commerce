@@ -6,7 +6,9 @@
             <h2>{{ listing.listing }}</h2>
         {% endfor %}
         {% for listing in listings %}
-            <img src="{{ listing.photo.url }}" class="img-fluid">
+            <div class="input-group mb-3">
+                <img src="{{ listing.photo.url }}" class="img-fluid">
+            </div>
             <h4>Listed By</h4>
             <p>{{ listing.user }}</p>
             <h4>Category</h4>
@@ -29,14 +31,14 @@
             <form method="POST" action="{% url 'comment' listing.id %}">
                 {% csrf_token %}
                 <div class="input-group mb-3">
-                    <input class="form-control" type="text" name="comment" size="50" placeholder="Comment"></input>
+                    <input class="form-control" type="text" name="comment" size="50" placeholder="Comment" required></input>
                     <button class="btn btn-primary" type="submit">Comment</button>
                 </div>
             </form>
         {% endfor %}
         <form method="POST">
             {% csrf_token %}
-            <div class="form-input">
+            <div class="input-group mb-3">
                 <input type="submit" name="end" value="Close Auction"></input>
             </div>
         </form>
