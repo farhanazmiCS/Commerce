@@ -1,4 +1,4 @@
-# CS50-Web-Project-2
+# Commerce
 
 ## Description
 A web application that allows users to create, bid, and comment on e-commerce listings, utilising databases and Django models.
